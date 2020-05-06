@@ -69,7 +69,6 @@ public class Lexer {
 
         while (espaciosBlanco.contains(entrada.charAt(charsAeliminar))) {
         	charsAeliminar++;
-        	System.out.println("Chars: "+charsAeliminar);
         }
 
         if (charsAeliminar > 0) {

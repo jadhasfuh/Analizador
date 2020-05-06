@@ -44,6 +44,8 @@ public enum Token7point0 {
 	lectura("lectura"),
 	retorna("retorna"),
 	identificador("@[_]?[A-Z|a-z|0-9]+"),
+	identificadorC("%%[_]?[A-Z|a-z|0-9]+"),
+	identificadorF("%[_]?[A-Z|a-z|0-9]+"),
 	id_dec("[-]?([1-9][0-9]+[.][0-9][1-9]+|0[.][0-9][1-9]+|[1-9][0-9]+[.]0)([eE][+-][1-9][0-9]+[1-9])?"),
     id_ent("[-]?(0|([1-9][0-9]*))"),
     id_cad("[\"][[\\w-]|[@]|[=/*-+]|[:.,{}';]|[\"]|[\\s]]+[\"]"),

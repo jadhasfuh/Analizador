@@ -142,7 +142,7 @@ public class SoftwareVersion7point0 implements KeyListener, MouseWheelListener, 
 							ct.setText(""+seleccionado.getSelectedFile().getAbsolutePath());
 							reservada = seleccionado.getSelectedFile().getName();
 							String []palabraid=reservada.split("\\.");
-							System.out.println("id clase: "+palabraid[palabraid.length-2]);
+							//System.out.println("id clase: "+palabraid[palabraid.length-2]);
 							
 						}
 					}else {
@@ -250,7 +250,7 @@ public class SoftwareVersion7point0 implements KeyListener, MouseWheelListener, 
 					consola.setText(consola.getText()+"-----------------\n");
 					
 			        while (!lexer.isExausthed()) { //Este es equivalente al HASNEXT
-			        	tokens.add(lexer.currentLexema() +"     "+ lexer.currentToken());// se añade a una lista para su futuro aSintac
+			        	tokens.add(lexer.currentToken()+"");// se añade a una lista para su futuro aSintac
 			        	consola.setText(consola.getText()+lexer.currentLexema() +"     "+ lexer.currentToken()+"\n"); //Luego se imprime
 			            lexer.siguiente();//Avanza
 			        }
@@ -266,6 +266,27 @@ public class SoftwareVersion7point0 implements KeyListener, MouseWheelListener, 
 				}
 		    }
 		});
+		
+		sintax.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				if (!(ct.getText().length()<1)) {
+					ASintancticoTabla1 t1 = new ASintancticoTabla1(tokens);
+					//Se borra lo que tiene la consola
+					consolaS.setText("");
+					consolaS.setText(consolaS.getText()+"Análisis Sintáctico\n");
+					consolaS.setText(consolaS.getText()+"-----------------\n");
+					
+					t1.AS();
+			        
+				}else {
+					JOptionPane.showMessageDialog(null, "No hay archivos abiertos");
+				}
+		    
+			}
+		});
+		
+		/*
 		DefaultHighlighter.DefaultHighlightPainter highlightPainter = new DefaultHighlighter.DefaultHighlightPainter(Color.GREEN);
 
 		sintax.addActionListener(new ActionListener() {
@@ -320,7 +341,7 @@ public class SoftwareVersion7point0 implements KeyListener, MouseWheelListener, 
 					JOptionPane.showMessageDialog(null, "No hay archivos abiertos");
 				}
 		    }
-		});
+		});*/
 		
 		barraM.add(archivo);
 		barraM.add(opciones);
