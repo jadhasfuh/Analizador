@@ -7,9 +7,9 @@ import javax.swing.JOptionPane;
 
 public class ASintancticoTabla1 {
 	
-	ArrayList<String> lex = new ArrayList<String>();
-	ArrayList<String> elexe = new ArrayList<String>();
-	ArrayList<String> terminales = new ArrayList<String>();
+	ArrayList<String> lex = new ArrayList<String>();          	// Lo que arroja el analisis lexico
+	ArrayList<String> elexe = new ArrayList<String>();			// Fila de entrantes
+	ArrayList<String> terminales = new ArrayList<String>();		// Columna de terminales
 	Stack<String> pila = new Stack<String>();
 	
 	String [][] tabla1 = 
@@ -22,6 +22,7 @@ public class ASintancticoTabla1 {
 				{"F" ,"identificador","id_ent","abP E ciP"," "," "     ," "		," "	  ," "	   ,"id_cad","id_cart"," "		}
 		};
 	
+	//Este metodo llena la fila y columna en los arrays creados para ahorrarnos bucles de búsqueda
 	public void llenarFyC() {
 		for (int i = 0; i < tabla1.length; i++) {
 			terminales.add(tabla1[i][0]);
@@ -31,6 +32,7 @@ public class ASintancticoTabla1 {
 		}
 	}
 	
+	//Este es el constructor que recibe todo el pedo y inicia lo esensial
 	public ASintancticoTabla1(ArrayList<String> lexemas) {
 		lex = lexemas;
 		llenarFyC();
@@ -38,6 +40,7 @@ public class ASintancticoTabla1 {
 		pila.push("E");
 	}
 	
+	//Este es el único metodo que se llama
 	public void AS() {
 		for (int i = 0; i < lex.size(); i++) {
 			procesoApilAndDesapil(i);
@@ -49,12 +52,14 @@ public class ASintancticoTabla1 {
 		}
 	}
 	
+	//Este nos va a servir para llamarlo y mediante recursivida poder llenar hasta que se desapile y concuerde y retorne a AS
 	public void procesoApilAndDesapil (int pivote) {
 		if (terminales.contains(pila.peek()) && elexe.contains(lex.get(pivote))) {
 			apila(terminales.indexOf(pila.peek()), elexe.indexOf(lex.get(pivote)),pivote);
 		}
 	}
 	
+	//Aqui apila hasta lo indicado en procesoApilAndDesapil()
 	public void apila(int i, int j, int pivote) {
 
 		String interseccion = tabla1[i][j];
