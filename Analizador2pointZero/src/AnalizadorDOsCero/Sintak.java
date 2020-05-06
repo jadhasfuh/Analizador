@@ -5,12 +5,14 @@ import java.util.Stack;
 
 import javax.swing.JOptionPane;
 
-public class ASintancticoTabla1 {
+public class Sintak {
 	
 	ArrayList<String> lex = new ArrayList<String>();          	// Lo que arroja el analisis lexico
 	ArrayList<String> elexe = new ArrayList<String>();			// Fila de entrantes
 	ArrayList<String> terminales = new ArrayList<String>();		// Columna de terminales
 	Stack<String> pila = new Stack<String>();
+	String MensajeDeError = "";
+	String MensajeDePila = "";
 	
 	String [][] tabla1 = 
 		{
@@ -33,23 +35,25 @@ public class ASintancticoTabla1 {
 	}
 	
 	//Este es el constructor que recibe todo el pedo y inicia lo esensial
-	public ASintancticoTabla1(ArrayList<String> lexemas) {
-		lex = lexemas;
+	public Sintak() {
 		llenarFyC();
 		pila.push("finale");
 		pila.push("E");
 	}
 	
-	//Este es el único metodo que se llama
-	public void AS() {
-		for (int i = 0; i < lex.size(); i++) {
-			procesoApilAndDesapil(i);
-		}
-		if (pila.isEmpty()) {
-			JOptionPane.showMessageDialog(null, "Se acepta");
+	public boolean aceptado() {
+		if (pila.isEmpty() && MensajeDeError.isEmpty()) {
+			return true;
 		}else {
-			JOptionPane.showMessageDialog(null, pila);
+			return false;
 		}
+	}
+	
+	//Este es el único metodo que se llama
+	public void AS(String lexema) {
+		MensajeDePila = "";
+		lex.add(lexema);
+		procesoApilAndDesapil(lex.size()-1);
 	}
 	
 	//Este nos va a servir para llamarlo y mediante recursivida poder llenar hasta que se desapile y concuerde y retorne a AS
@@ -61,24 +65,26 @@ public class ASintancticoTabla1 {
 	
 	//Aqui apila hasta lo indicado en procesoApilAndDesapil()
 	public void apila(int i, int j, int pivote) {
-
 		String interseccion = tabla1[i][j];
-		String[] interseccionArray = interseccion.split(" ");
-		pila.pop();
-		for (int k = interseccionArray.length; k > 0; k--) {
-			pila.push(interseccionArray[k - 1]);
-		}
-		if (pila.peek().equalsIgnoreCase("ç")) {
+		if (interseccion == " ") {
+			MensajeDeError += "Error de Sintaxis: "+lex.get(pivote)+" después de "+ lex.get(pivote-1); 
+		}else {
+			String[] interseccionArray = interseccion.split(" ");
 			pila.pop();
+			for (int k = interseccionArray.length; k > 0; k--) {
+				pila.push(interseccionArray[k - 1]);
+			}
+			if (pila.peek().equalsIgnoreCase("ç")) {
+				pila.pop();
+			}
+			if (pila.peek().equalsIgnoreCase(lex.get(pivote))) {
+				MensajeDePila += pila+"\n";
+				pila.pop();
+				MensajeDePila += pila+"\n";
+			} else {
+				MensajeDePila += pila+"\n";
+				procesoApilAndDesapil(pivote);
+			}
 		}
-		if (pila.peek().equalsIgnoreCase(lex.get(pivote))) {
-			System.out.println(pila);
-			pila.pop();
-			System.out.println(pila);
-		} else {
-			System.out.println(pila);
-			procesoApilAndDesapil(pivote);
-		}
-
 	}
 }

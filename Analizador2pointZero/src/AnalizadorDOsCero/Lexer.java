@@ -12,15 +12,12 @@ import java.util.stream.Stream;
 public class Lexer {
 	
     private StringBuilder entrada = new StringBuilder();
-    private Token7point0 token;
+    private Tokens token;
     private String lexema;
     private boolean detener = false;
     private String mensajeError = "";
     private Set<Character> espaciosBlanco = new HashSet<Character>();
-    public Lexer() {
-    	
-	}
-
+ 
     public  void LexerL(String filePath) {
         try (Stream<String> st = Files.lines(Paths.get(filePath))) {
             st.forEach(entrada::append);
@@ -29,7 +26,6 @@ public class Lexer {
         	mensajeError = "Error en lectura de archivo: " + filePath;
             return;
         }
-
         espaciosBlanco.add('\r');
         espaciosBlanco.add('\n');
         espaciosBlanco.add((char) 8);
@@ -37,7 +33,6 @@ public class Lexer {
         espaciosBlanco.add((char) 11);
         espaciosBlanco.add((char) 12);
         espaciosBlanco.add((char) 32);
-
         siguiente();
     }
 
@@ -45,58 +40,59 @@ public class Lexer {
         if (detener) {
             return;
         }
-
         if (entrada.length() == 0) {
         	detener = true;
             return;
         }
-
         ignoraEspacios();
-
         if (findNextToken()) {
             return;
         }
-
         detener = true;
-
         if (entrada.length() > 0) {
-        	mensajeError = "Error Léxico: '" + entrada.charAt(0) + "'";
+        	mensajeError += "Error Léxico: '" + entrada.charAt(0) + "'\n";
+        	detener = true;
+        	return;
         }
     }
 
     private void ignoraEspacios() {
         int charsAeliminar = 0;
-
         while (espaciosBlanco.contains(entrada.charAt(charsAeliminar))) {
         	charsAeliminar++;
         }
-
         if (charsAeliminar > 0) {
         	entrada.delete(0, charsAeliminar);
         }
     }
 
-    private boolean findNextToken() {
-        for (Token7point0 t : Token7point0.values()) {
-            int end = t.endOfMatch(entrada.toString());
+	public void errorEncontrado() {
+				entrada.delete(0, 1);
+	}
 
+    private boolean findNextToken() {
+        for (Tokens t : Tokens.values()) {
+            int end = t.endOfMatch(entrada.toString());
+           
             if (end != -1) {
                 token = t;
                 lexema = entrada.substring(0, end);
+                System.out.println(entrada+ "   "+end +"     "+t.toString());
                 entrada.delete(0, end);
                 return true;
             }
         }
-
         return false;
     }
 
-    public Token7point0 currentToken() {
+    public Tokens currentToken() {
         return token;
     }
+    
     private String lex;
+    
     public String LexemaToken(String token) {
-    	Token7point0 t1=Token7point0.valueOf(token);
+    	Tokens t1=Tokens.valueOf(token);
     	return token;
     }
 
@@ -116,11 +112,5 @@ public class Lexer {
         return detener;
     }
 }
-
-
-
-
-
-
 
 

@@ -6,8 +6,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public enum Token7point0 {
-
+public enum Tokens {
 	si("si"),
 	para("para"),
 	sino("sino"),
@@ -49,7 +48,7 @@ public enum Token7point0 {
 	id_dec("[-]?([1-9][0-9]+[.][0-9][1-9]+|0[.][0-9][1-9]+|[1-9][0-9]+[.]0)([eE][+-][1-9][0-9]+[1-9])?"),
     id_ent("[-]?(0|([1-9][0-9]*))"),
     id_cad("[\"][[\\w-]|[@]|[=/*-+]|[:.,{}';]|[\"]|[\\s]]+[\"]"),
-    id_cart("[\'][[\\\\w-]|[@]|[=/*-+]|[:.,{}';]|[\\\"]|[\\\\s]][\']"),
+    id_cart("[\'][[\\w-]|[@]|[=/*-+]|[:.,{}';]|[\"]|[\\s]][\']"),
     op_asig("[-][>]"),
     op_cond("[?][:]"),
     op_negacion("[!]"),
@@ -71,14 +70,12 @@ public enum Token7point0 {
     comment("[#]");
 
     private final Pattern pattern;
-    Token7point0(String regex) {
+    Tokens(String regex) {
         pattern = Pattern.compile("^" + regex);
     }
-    
-
+   
     int endOfMatch(String s) {
         Matcher m = pattern.matcher(s);
-
         if (m.find()) {
             return m.end();
         }

@@ -10,16 +10,12 @@ public class Buscador {
 	public Buscador() {
 		try {
 			salida = new FileOutputStream(archivo);
-		}catch(Exception e) {
-			
-		}
+		}catch(Exception e) {}
 	}
 	
 	//Esta madre guarda
 	public String AbrirTexto(File archivo) {
-		
 		String contenido = "";
-		
 		try {
 			entrada = new FileInputStream(archivo);
 			int ascci;
@@ -30,9 +26,6 @@ public class Buscador {
 		}catch(Exception e) {	
 			e.printStackTrace();
 		}	
-		
-		System.out.println(contenido);
-		
 		return contenido;
 	}
 	
@@ -44,11 +37,7 @@ public class Buscador {
 			salida.write(byt);
 			mgs="Archivo guardado";
 			
-		}catch(Exception e) {
-			
-		}
-		
+		}catch(Exception e) {}
 		return mgs;
 	}
-	
 }

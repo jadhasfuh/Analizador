@@ -58,7 +58,7 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-public class SoftwareVersion7point0 implements KeyListener, MouseWheelListener, MouseListener {
+public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListener {
 
 	
 	/*
@@ -84,7 +84,7 @@ public class SoftwareVersion7point0 implements KeyListener, MouseWheelListener, 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-					SoftwareVersion7point0 window = new SoftwareVersion7point0();
+					PScriptIDE window = new PScriptIDE();
 					window.frmPstudio.setLocationRelativeTo(null);
 					window.frmPstudio.setVisible(true);
 			}
@@ -94,7 +94,7 @@ public class SoftwareVersion7point0 implements KeyListener, MouseWheelListener, 
 	/*
 	 * Esta es la clase, sin embargo construye la ventana por separado en un método
 	*/
-	public SoftwareVersion7point0() {
+	public PScriptIDE() {
 		initialize();
 	}
 	
@@ -142,10 +142,7 @@ public class SoftwareVersion7point0 implements KeyListener, MouseWheelListener, 
 							ct.setText(""+seleccionado.getSelectedFile().getAbsolutePath());
 							reservada = seleccionado.getSelectedFile().getName();
 							String []palabraid=reservada.split("\\.");
-							//System.out.println("id clase: "+palabraid[palabraid.length-2]);
-							
 						}
-					}else {
 					}
 				}
 			}
@@ -230,118 +227,62 @@ public class SoftwareVersion7point0 implements KeyListener, MouseWheelListener, 
 		/*
 		 * Aquí mandamos a llamar a la clase de análisis lexico, con el botón run analisis
 		*/
-
+		JMenuItem ana = new JMenuItem("Compilar");
+		ana.setIcon(new ImageIcon(PScriptIDE.class.getResource("/AnalizadorDOsCero/img/play.png")));
+		run.add(ana);
 		
-		JMenuItem lex = new JMenuItem("Análisis Léxico");
-		lex.setIcon(new ImageIcon(SoftwareVersion7point0.class.getResource("/AnalizadorDOsCero/img/play.png")));
-		run.add(lex);
-		JMenuItem sintax = new JMenuItem("Análisis Sintactico");
-		sintax.setIcon(new ImageIcon(SoftwareVersion7point0.class.getResource("/AnalizadorDOsCero/img/play.png")));
-		run.add(sintax);
-		lex.addActionListener(new ActionListener() {
+		ana.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
 				if (!(ct.getText().length()<1)) {
+					
 					Lexer lexer = new Lexer();
 					lexer.LexerL(ct.getText());
+					
+					Sintak sintax = new Sintak();
+					
 					//Se borra lo que tiene la consola
 					consola.setText("");
+					consola.setText(consola.getText()+"-----------------\n");
 					consola.setText(consola.getText()+"Análisis Léxico\n");
 					consola.setText(consola.getText()+"-----------------\n");
 					
-			        while (!lexer.isExausthed()) { //Este es equivalente al HASNEXT
-			        	tokens.add(lexer.currentToken()+"");// se añade a una lista para su futuro aSintac
+					consolaS.setText("");
+					consola.setText(consolaS.getText()+"-----------------\n");
+					consola.setText(consolaS.getText()+"Análisis Sintáctico\n");
+					consola.setText(consolaS.getText()+"-----------------\n");
+					
+					while (!lexer.isExausthed()) { //Este es equivalente al HASNEXT
+			        	sintax.AS(lexer.currentToken()+"");
 			        	consola.setText(consola.getText()+lexer.currentLexema() +"     "+ lexer.currentToken()+"\n"); //Luego se imprime
-			            lexer.siguiente();//Avanza
+			            consolaS.setText(consolaS.getText()+sintax.MensajeDePila);
+			        	lexer.siguiente();//Avanza
 			        }
-	
 			        if (lexer.isSuccessful()) {
 			        	consola.setText(consola.getText()+"-----------------\n");
-			        	consola.setText(consola.getText()+"Análisis finalizado correctamente\n");
+			        	consola.setText(consola.getText()+"Análisis Léxico finalizado correctamente\n");
+			        	consola.setText(consola.getText()+"-----------------\n");
 			        } else {
-			        	consola.setText(consola.getText()+lexer.mensajeError()+"\n"); //Imprime los errores
+			        	consola.setText(consola.getText()+"-----------------\n");
+			        	consola.setText(consola.getText()+"Análisis finalizado con errores\n");
+			        	consola.setText(consola.getText()+lexer.mensajeError()); //Imprime los errores
+			        	consola.setText(consola.getText()+"-----------------\n");
+			        }
+			        if (sintax.aceptado()) {
+			        	consolaS.setText(consolaS.getText()+"-----------------\n");
+			        	consolaS.setText(consolaS.getText()+"Análisis Sintáctico finalizado correctamente\n");
+			        	consolaS.setText(consolaS.getText()+"-----------------\n");
+					}else {
+			        	consolaS.setText(consolaS.getText()+"-----------------\n");
+			        	consolaS.setText(consolaS.getText()+"Análisis Sintáctico finalizado con errores\n");
+			        	consolaS.setText(consolaS.getText()+sintax.MensajeDeError+"\n"); //Imprime los errores
+			        	consolaS.setText(consolaS.getText()+"-----------------\n");
 			        }
 				}else {
 					JOptionPane.showMessageDialog(null, "No hay archivos abiertos");
 				}
 		    }
 		});
-		
-		sintax.addActionListener(new ActionListener() {
-			
-			public void actionPerformed(ActionEvent e) {
-				if (!(ct.getText().length()<1)) {
-					ASintancticoTabla1 t1 = new ASintancticoTabla1(tokens);
-					//Se borra lo que tiene la consola
-					consolaS.setText("");
-					consolaS.setText(consolaS.getText()+"Análisis Sintáctico\n");
-					consolaS.setText(consolaS.getText()+"-----------------\n");
-					
-					t1.AS();
-			        
-				}else {
-					JOptionPane.showMessageDialog(null, "No hay archivos abiertos");
-				}
-		    
-			}
-		});
-		
-		/*
-		DefaultHighlighter.DefaultHighlightPainter highlightPainter = new DefaultHighlighter.DefaultHighlightPainter(Color.GREEN);
-
-		sintax.addActionListener(new ActionListener() {
-			
-			public void actionPerformed(ActionEvent e) {
-				if (!(ct.getText().length()<1)) {
-					consolaS.setText("");
-					consolaS.setText("A. SINTACTICO/DESMADRE\n\n");
-					Lexer lexer = new Lexer();
-					lexer.LexerL(ct.getText());
-					ASintactico a= new ASintactico();
-					//Se borra lo que tiene la consola
-			        while (!lexer.isExausthed()) { //Este es equivalente al HASNEXT
-			        	tokens.add(lexer.currentLexema() +"     "+ lexer.currentToken());// se añade a una lista para su futuro aSintac
-			        	a.let.add(""+lexer.currentLexema());
-			        	a.entrada.add(""+lexer.currentToken());
-			            lexer.siguiente();//Avanza
-			            
-			        }
-	
-			        if (lexer.isSuccessful()) {
-			        	System.out.println("--------------JALE DEL SINTAX ERROR");
-				        a.llenado();
-				        a.letras();
-						a.Buscar();
-						Highlighter h = areaTrabajo.getHighlighter();
-						h.removeAllHighlights();
-						consolaS.setText(consolaS.getText()+a.mensaje);
-						if (a.b==false) {
-					        
-							String txt=areaTrabajo.getText();
-					        	for (int j = 0; j < areaTrabajo.getText().length(); j++) {
-					        		char ch= txt.charAt(j);
-					        		if(a.returnE().indexOf(ch)>=0) {
-					        			try {
-								            h.addHighlight(j, j+1, highlightPainter);
-								        } catch (BadLocationException ble) {
-								        	
-								        }
-					        		
-					        		}
-					        		
-								}
-					        	
-					        	
-						}
-			        	
-			        } else {
-			        	JOptionPane.showMessageDialog(null,"Ha habido un problema con el A lexico");
-			        }
-				}else {
-					JOptionPane.showMessageDialog(null, "No hay archivos abiertos");
-				}
-		    }
-		});*/
 		
 		barraM.add(archivo);
 		barraM.add(opciones);
