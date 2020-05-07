@@ -229,7 +229,7 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 		*/
 		JMenuItem ana = new JMenuItem("Compilar");
 		ana.setIcon(new ImageIcon(PScriptIDE.class.getResource("/AnalizadorDOsCero/img/play.png")));
-		run.add(ana);
+		run.add(ana);		
 		
 		ana.addActionListener(new ActionListener() {
 			
@@ -240,6 +240,7 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 					lexer.LexerL(ct.getText());
 					
 					Sintak sintax = new Sintak();
+					Highlighter h = areaTrabajo.getHighlighter();
 					
 					//Se borra lo que tiene la consola
 					consola.setText("");
@@ -256,12 +257,24 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 			        	sintax.AS(lexer.currentToken()+"",lexer.nlinea);
 			        	consola.setText(consola.getText()+lexer.currentLexema() +"     "+ lexer.currentToken()+"\n"); //Luego se imprime
 			            consolaS.setText(consolaS.getText()+sintax.MensajeDePila);
+			        	h.removeAllHighlights();
+			        	areaTrabajo.setSelectionColor(new Color(255, 102, 0));
+						int pos = areaTrabajo.getText().indexOf(lexer.currentLexema().toString(), 0);
+						try {
+							h.addHighlight(pos+lexer.currentLexema().toString().length() ,
+							               pos+ areaTrabajo.getText().length()-pos,
+							               DefaultHighlighter.DefaultPainter);
+						} catch (BadLocationException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 			        	lexer.siguiente();//Avanza
 			        }
 			        if (lexer.isSuccessful()) {
 			        	consola.setText(consola.getText()+"-----------------\n");
 			        	consola.setText(consola.getText()+"Análisis Léxico finalizado correctamente\n");
 			        	consola.setText(consola.getText()+"-----------------\n");
+			        	h.removeAllHighlights();
 			        } else {
 			        	consola.setText(consola.getText()+"-----------------\n");
 			        	consola.setText(consola.getText()+"Análisis finalizado con errores\n");
