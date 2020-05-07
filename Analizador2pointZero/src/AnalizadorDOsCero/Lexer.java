@@ -17,6 +17,7 @@ public class Lexer {
     private boolean detener = false;
     private String mensajeError = "";
     private Set<Character> espaciosBlanco = new HashSet<Character>();
+    int nlinea = 0;
  
     public  void LexerL(String filePath) {
         try (Stream<String> st = Files.lines(Paths.get(filePath))) {
@@ -50,7 +51,7 @@ public class Lexer {
         }
         detener = true;
         if (entrada.length() > 0) {
-        	mensajeError += "Error Léxico: '" + entrada.charAt(0) + "'\n";
+        	mensajeError += "Error Léxico: '" + entrada.charAt(0) + "' en la línea "+nlinea+"\n";
         	detener = true;
         	return;
         }
@@ -66,18 +67,12 @@ public class Lexer {
         }
     }
 
-	public void errorEncontrado() {
-				entrada.delete(0, 1);
-	}
-
     private boolean findNextToken() {
         for (Tokens t : Tokens.values()) {
             int end = t.endOfMatch(entrada.toString());
-           
             if (end != -1) {
                 token = t;
                 lexema = entrada.substring(0, end);
-                System.out.println(entrada+ "   "+end +"     "+t.toString());
                 entrada.delete(0, end);
                 return true;
             }

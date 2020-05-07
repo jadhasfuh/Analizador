@@ -253,7 +253,7 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 					consola.setText(consolaS.getText()+"-----------------\n");
 					
 					while (!lexer.isExausthed()) { //Este es equivalente al HASNEXT
-			        	sintax.AS(lexer.currentToken()+"");
+			        	sintax.AS(lexer.currentToken()+"",lexer.nlinea);
 			        	consola.setText(consola.getText()+lexer.currentLexema() +"     "+ lexer.currentToken()+"\n"); //Luego se imprime
 			            consolaS.setText(consolaS.getText()+sintax.MensajeDePila);
 			        	lexer.siguiente();//Avanza
