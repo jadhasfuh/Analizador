@@ -67,8 +67,9 @@ public enum Tokens {
     ini_com("[*][/]"),
     fin_com("[/][*]"),
     del_id(","),
+    error("[[\\w-]|[@#^-_?~`\\|]|[:.{}']|[\"]|[\\s]]"),
     comment("[#]");
-
+	
     private final Pattern pattern;
     Tokens(String regex) {
         pattern = Pattern.compile("^" + regex);
