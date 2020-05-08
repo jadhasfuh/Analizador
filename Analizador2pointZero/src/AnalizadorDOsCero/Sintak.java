@@ -75,7 +75,11 @@ public class Sintak {
 	public void apila(int i, int j, int pivote) {
 		String interseccion = tabla1[i][j];
 		if (interseccion == " ") {
-			MensajeDeError += "Error de Sintaxis: "+lex.get(pivote)+" después de "+ lex.get(pivote-1)+"\n" ; errP = false;
+			if (pivote > 0) {
+				MensajeDeError += "Error de Sintaxis: "+lex.get(pivote)+" después de "+ lex.get(pivote-1)+"\n" ; errP = false;
+			}else {
+				MensajeDeError += "Error de Sintaxis: "+lex.get(pivote)+" al inicio de la línea 1\n" ; errP = false;
+			}
 		}else {
 			String[] interseccionArray = interseccion.split(" ");
 			pila.pop();

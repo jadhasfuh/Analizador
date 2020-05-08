@@ -237,6 +237,8 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 			public void actionPerformed(ActionEvent e) {
 				if (!(ct.getText().length()<1)) {
 					
+					tokens.clear();
+					
 					Lexer lexer = new Lexer();
 					lexer.LexerL(ct.getText(), areaTrabajo);
 					
