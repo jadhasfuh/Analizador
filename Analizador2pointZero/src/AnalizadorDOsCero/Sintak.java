@@ -13,6 +13,7 @@ public class Sintak {
 	Stack<String> pila = new Stack<String>();
 	String MensajeDeError = "";
 	String MensajeDePila = "";
+	boolean errP = false; 
 	
 	String [][] tabla1 = 
 		{
@@ -52,16 +53,17 @@ public class Sintak {
 	}
 	
 	//Este es el único metodo que se llama
-	public void AS(String lexema) {
+	public boolean AS(String lexema) {
 		MensajeDePila = "";
 		lex.add(lexema);
 		procesoApilAndDesapil(lex.size()-1);
+		return errP;
 	}
 	
 	//Este nos va a servir para llamarlo y mediante recursivida poder llenar hasta que se desapile y concuerde y retorne a AS
 	public void procesoApilAndDesapil (int pivote) {
 		if(pila.isEmpty()) {
-			MensajeDeError += "Error de Sintaxis: "+lex.get(pivote)+" después de "+ lex.get(pivote-1);
+			MensajeDeError += "Error de Sintaxis: "+lex.get(pivote)+" después de "+ lex.get(pivote-1)+"\n";errP = false;
 			pila.push(" ");
 		}
 		if (terminales.contains(pila.peek()) && elexe.contains(lex.get(pivote))) {
@@ -73,7 +75,7 @@ public class Sintak {
 	public void apila(int i, int j, int pivote) {
 		String interseccion = tabla1[i][j];
 		if (interseccion == " ") {
-			MensajeDeError += "Error de Sintaxis: "+lex.get(pivote)+" después de "+ lex.get(pivote-1); 
+			MensajeDeError += "Error de Sintaxis: "+lex.get(pivote)+" después de "+ lex.get(pivote-1)+"\n" ; errP = false;
 		}else {
 			String[] interseccionArray = interseccion.split(" ");
 			pila.pop();
@@ -86,7 +88,7 @@ public class Sintak {
 			if (pila.peek().equalsIgnoreCase(lex.get(pivote))) {
 				MensajeDePila += pila+"\n";
 				pila.pop();
-				MensajeDePila += pila+"\n";
+				MensajeDePila += pila+"\n";errP = true;
 			} else {
 				MensajeDePila += pila+"\n";
 				procesoApilAndDesapil(pivote);

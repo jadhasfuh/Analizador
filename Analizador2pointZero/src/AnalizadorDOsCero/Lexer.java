@@ -25,6 +25,7 @@ public class Lexer {
     private String mensajeError = "";
     private Set<Character> espaciosBlanco = new HashSet<Character>();
     int nlinea = 0;
+    int npalabra = 0;
  
     public void LexerL(String filePath, JTextArea ta) {
     	
@@ -33,7 +34,7 @@ public class Lexer {
     		String line = null;
     		while ((line = in.readLine()) != null) {
 				nlinea++;
-				entrada.append(line);
+				entrada.append(line.trim()); //le puse el trim por que luego mandama más mamadas
 			}
     	}catch (IOException e) {
     		detener = true;
@@ -91,9 +92,6 @@ public class Lexer {
                 entrada.delete(0, end);
                 return true;
             }
-            if (token == null){
-            	mensajeError += "Error Léxico: '" + split[0] + "' en la línea "+nlinea+"\n";
-			}
         }
         return false;
     }

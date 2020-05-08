@@ -76,6 +76,7 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 	HighlightPainter colorin;
 	ArrayList<String> tokens = new ArrayList<String>();
 	static String salida; 
+	int pos = 0, pos2 = 0;
 	private JTextPane consola, consolaS;
 	
 	/*
@@ -240,7 +241,10 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 					lexer.LexerL(ct.getText(), areaTrabajo);
 					
 					Sintak sintax = new Sintak();
-					Highlighter h = areaTrabajo.getHighlighter();
+					Highlighter lexH = areaTrabajo.getHighlighter();
+					Highlighter sinH = areaTrabajo.getHighlighter();
+					lexH.removeAllHighlights();
+					sinH.removeAllHighlights();
 					
 					//Se borra lo que tiene la consola
 					consola.setText("");
@@ -253,36 +257,46 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 					consola.setText(consolaS.getText()+"Análisis Sintáctico\n");
 					consola.setText(consolaS.getText()+"-----------------\n");
 					
+					boolean falloS = false;
+					boolean falloL = false;
+					
 					while (!lexer.isExausthed()) { //Este es equivalente al HASNEXT
 						tokens.add(lexer.currentToken()+""); // Solo para comprobar
-						if (tokens.get(tokens.size()-1) == "error") {
-							consola.setText(consola.getText()+lexer.currentLexema() +"     "+ lexer.currentToken()+" en la línea "+lexer.nlinea+"\n");
+						if (tokens.get(tokens.size()-1).equalsIgnoreCase("error")) {
+							if (falloL == false) {
+								pos = areaTrabajo.getText().indexOf(lexer.currentLexema().toString(), 0);
+				            	falloL = true;
+							}
+							consola.setText(consola.getText()+"Error léxico: "+lexer.currentLexema()+"\n");
 						}else {
-							sintax.AS(lexer.currentToken()+"");
+							if (!sintax.AS(lexer.currentToken()+"")) {
+								consola.setText(consola.getText()+lexer.currentLexema() +"     "+ lexer.currentToken()+"\n"); //Luego se imprime
+					            consolaS.setText(consolaS.getText()+sintax.MensajeDePila);
+					            if (falloS == false) {
+					            	pos2 = areaTrabajo.getText().indexOf(lexer.currentLexema().toString(),0);
+					            	falloS = true;
+								}
+							}else {
+								consola.setText(consola.getText()+lexer.currentLexema() +"     "+ lexer.currentToken()+"\n"); //Luego se imprime
+					            consolaS.setText(consolaS.getText()+sintax.MensajeDePila);
+							}
 						}
-			        	consola.setText(consola.getText()+lexer.currentLexema() +"     "+ lexer.currentToken()+"\n"); //Luego se imprime
-			            consolaS.setText(consolaS.getText()+sintax.MensajeDePila);
-			        	h.removeAllHighlights();
-			        	areaTrabajo.setSelectionColor(new Color(255, 102, 0));
-						int pos = areaTrabajo.getText().indexOf(lexer.currentLexema().toString(), 0);
-						try {
-							h.addHighlight(pos+lexer.currentLexema().toString().length() ,
-							               pos+ areaTrabajo.getText().length()-pos,
-							               DefaultHighlighter.DefaultPainter);
-						} catch (BadLocationException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
+			        	
 			        	lexer.siguiente();//Avanza
 			        }
 			        if (lexer.isSuccessful() && !tokens.contains("error")) {
 			        	consola.setText(consola.getText()+"-----------------\n");
 			        	consola.setText(consola.getText()+"Análisis Léxico finalizado correctamente\n");
 			        	consola.setText(consola.getText()+"-----------------\n");
-			        	h.removeAllHighlights();
 			        } else {
+			        	try {
+							lexH.addHighlight(pos, pos+ areaTrabajo.getText().length()-pos,
+							               DefaultHighlighter.DefaultPainter);
+						} catch (BadLocationException e1) {
+							e1.printStackTrace();
+						}
 			        	consola.setText(consola.getText()+"-----------------\n");
-			        	consola.setText(consola.getText()+"Análisis finalizado con errores\n");
+			        	consola.setText(consola.getText()+"Análisis Léxico finalizado con errores\n");
 			        	consola.setText(consola.getText()+lexer.mensajeError()); //Imprime los errores
 			        	consola.setText(consola.getText()+"-----------------\n");
 			        }
@@ -291,6 +305,14 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 			        	consolaS.setText(consolaS.getText()+"Análisis Sintáctico finalizado correctamente\n");
 			        	consolaS.setText(consolaS.getText()+"-----------------\n");
 					}else {
+						try {
+							sinH.addHighlight(pos2 ,
+							               pos2+areaTrabajo.getText().length(),
+							               new DefaultHighlighter.DefaultHighlightPainter(new Color(255,150,0)));
+							
+						} catch (BadLocationException e1) {
+							e1.printStackTrace();
+						}
 			        	consolaS.setText(consolaS.getText()+"-----------------\n");
 			        	consolaS.setText(consolaS.getText()+"Análisis Sintáctico finalizado con errores\n");
 			        	consolaS.setText(consolaS.getText()+sintax.MensajeDeError+"\n"); //Imprime los errores
@@ -352,23 +374,23 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 		consola.setForeground(Color.WHITE);
 		consola.setBackground(Color.DARK_GRAY);
 		consola.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		consola.setBounds(0, 554, 550, 114);
+		consola.setBounds(0, 555, 552, 109);
 		
 		consolaS = new JTextPane();
 		consolaS.setForeground(Color.WHITE);
 		consolaS.setBackground(Color.GRAY);
 		consolaS.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		consolaS.setBounds(561, 554, 550, 114);
+		consolaS.setBounds(553, 555, 552, 109);
 		
 		sp2s = new JScrollPane(consolaS);
-		sp2s.setBounds(561, 554, 550, 114);
+		sp2s.setBounds(553, 555, 552, 109);
 		sp2s.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		sp2s.getVerticalScrollBar().setBackground(SystemColor.control);
 		sp2s.setBackground(Color.white);
 		sp2s.setOpaque(true);
 		
 		sp2 = new JScrollPane(consola);
-		sp2.setBounds(0, 554, 550, 114);
+		sp2.setBounds(0, 555, 552, 109);
 		sp2.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		sp2.getVerticalScrollBar().setBackground(SystemColor.control);
 		sp2.setBackground(Color.white);
