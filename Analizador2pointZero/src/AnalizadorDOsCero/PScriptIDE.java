@@ -241,6 +241,7 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 					
 					Lexer lexer = new Lexer();
 					lexer.LexerL(ct.getText(), areaTrabajo);
+					String error = "";
 					
 					Sintak sintax = new Sintak();
 					Highlighter lexH = areaTrabajo.getHighlighter();
@@ -263,27 +264,30 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 					boolean falloL = false;
 					
 					while (!lexer.isExausthed()) { //Este es equivalente al HASNEXT
-						tokens.add(lexer.currentToken()+""); // Solo para comprobar
-						if (tokens.get(tokens.size()-1).equalsIgnoreCase("error")) {
-							if (falloL == false) {
-								pos = areaTrabajo.getText().indexOf(lexer.currentLexema().toString(), 0);
-				            	falloL = true;
-							}
-							consola.setText(consola.getText()+"Error léxico: "+lexer.currentLexema()+"\n");
-						}else {
-							if (!sintax.AS(lexer.currentToken()+"")) {
-								consola.setText(consola.getText()+lexer.currentLexema() +"     "+ lexer.currentToken()+"\n"); //Luego se imprime
-					            consolaS.setText(consolaS.getText()+sintax.MensajeDePila);
-					            if (falloS == false) {
-					            	pos2 = areaTrabajo.getText().indexOf(lexer.currentLexema().toString(),0);
-					            	falloS = true;
+						if (lexer.currentLexema() != null) {
+							
+						
+							tokens.add(lexer.currentToken()+""); // Solo para comprobar
+							if (tokens.get(tokens.size()-1).equalsIgnoreCase("error")) {
+								if (falloL == false) {
+									pos = areaTrabajo.getText().indexOf(lexer.currentLexema().toString(), 0);
+					            	falloL = true;
 								}
+								error += ("Error léxico: "+lexer.currentLexema()+" en linea"+lexer.lene+"\n");
 							}else {
-								consola.setText(consola.getText()+lexer.currentLexema() +"     "+ lexer.currentToken()+"\n"); //Luego se imprime
-					            consolaS.setText(consolaS.getText()+sintax.MensajeDePila);
+								if (!sintax.AS(lexer.currentToken()+"")) {
+									consola.setText(consola.getText()+lexer.currentLexema() +"     "+ lexer.currentToken()+"\n"); //Luego se imprime
+						            consolaS.setText(consolaS.getText()+sintax.MensajeDePila);
+						            if (falloS == false) {
+						            	pos2 = areaTrabajo.getText().indexOf(lexer.currentLexema().toString(),0);
+						            	falloS = true;
+									}
+								}else {
+									consola.setText(consola.getText()+lexer.currentLexema() +"     "+ lexer.currentToken()+"\n"); //Luego se imprime
+						            consolaS.setText(consolaS.getText()+sintax.MensajeDePila);
+								}
 							}
 						}
-			        	
 			        	lexer.siguiente();//Avanza
 			        }
 			        if (lexer.isSuccessful() && !tokens.contains("error")) {
@@ -299,7 +303,7 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 						}
 			        	consola.setText(consola.getText()+"-----------------\n");
 			        	consola.setText(consola.getText()+"Análisis Léxico finalizado con errores\n");
-			        	consola.setText(consola.getText()+lexer.mensajeError()); //Imprime los errores
+			        	consola.setText(consola.getText()+error); //Imprime los errores
 			        	consola.setText(consola.getText()+"-----------------\n");
 			        }
 			        if (sintax.aceptado()) {

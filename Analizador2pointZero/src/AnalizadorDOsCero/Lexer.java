@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -24,8 +25,9 @@ public class Lexer {
     private boolean detener = false;
     private String mensajeError = "";
     private Set<Character> espaciosBlanco = new HashSet<Character>();
+    ArrayList<String> lineas = new ArrayList<String>();
     int nlinea = 0;
-    int npalabra = 0;
+    int lene = 0;
  
     public void LexerL(String filePath, JTextArea ta) {
     	
@@ -33,12 +35,13 @@ public class Lexer {
     		BufferedReader in = new BufferedReader(new FileReader(filePath));
     		String line = null;
     		while ((line = in.readLine()) != null) {
-				nlinea++;
-				entrada.append(line.trim()); //le puse el trim por que luego mandama más mamadas
-			}
+    			if (!line.equals("")) {
+    				lineas.add(line.trim());     //anade a lista de lineas 
+				}
+    		}
     	}catch (IOException e) {
     		detener = true;
-    		mensajeError = "Error en lectura de archivo: " + filePath;
+    		mensajeError += "Error en lectura de archivo: " + filePath;
     		return;
 		}
     
@@ -56,40 +59,45 @@ public class Lexer {
         if (detener) {
             return;
         }
-        if (entrada.length() == 0) {
-        	detener = true;
-            return;
-        }
-        ignoraEspacios();
-        if (findNextToken()) {
-            return;
-        }
+        if (lineas.get(nlinea).length() == 0) {
+        	if (lineas.size() == nlinea+1) {
+    			detener = true;
+    			return;
+    		}
+			nlinea++;
+		}
+        if (!(lineas.size() == nlinea)) {
+        	ignoraEspacios();
+            if (findNextToken()) {
+                return;
+            }
+		}        
         detener = true;
-        if (entrada.length() > 0) {
-        	mensajeError += "Error Léxico: '" + entrada.charAt(0) + "' en la línea "+nlinea+"\n";
-        	detener = false;
+        if (lineas.get(nlinea).length() > 0) {
+        	detener = true;
         	return;
-        }
+		}
     }
 
     private void ignoraEspacios() {
         int charsAeliminar = 0;
-        while (espaciosBlanco.contains(entrada.charAt(charsAeliminar))) {
+        while(espaciosBlanco.contains(lineas.get(nlinea).charAt(charsAeliminar))) {
         	charsAeliminar++;
         }
         if (charsAeliminar > 0) {
-        	entrada.delete(0, charsAeliminar);
+        	lineas.set(nlinea, lineas.get(nlinea).substring(charsAeliminar,lineas.get(nlinea).length()));
         }
     }
 
-    private boolean findNextToken() {
-    	String[] split = entrada.toString().split(" ");	 
+    private boolean findNextToken() { 
+    	String[] split = lineas.get(nlinea).split(" ");	 
         for (Tokens t : Tokens.values()) {
             int end = t.endOfMatch(split[0]);
             if (end != -1) {
                 token = t;
-                lexema = entrada.substring(0, end);
-                entrada.delete(0, end);
+                lexema = lineas.get(nlinea).substring(0,end);
+                lineas.set(nlinea, lineas.get(nlinea).substring(end,lineas.get(nlinea).length()));
+                lene = nlinea+1;
                 return true;
             }
         }
@@ -99,14 +107,6 @@ public class Lexer {
     public Tokens currentToken() {
         return token;
     }
-    
-    private String lex;
-    
-    public String LexemaToken(String token) {
-    	Tokens t1=Tokens.valueOf(token);
-    	return token;
-    }
-
     public String currentLexema() {
         return lexema;
     }
