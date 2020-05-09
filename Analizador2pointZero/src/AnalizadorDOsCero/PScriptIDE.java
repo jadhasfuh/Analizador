@@ -140,6 +140,7 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 						if (archiv.getName().endsWith("pau")) {
 							String contenido = b.AbrirTexto(archiv);
 							areaTrabajo.setText(contenido);
+							nlineaTextArea();
 							ct.setText(""+seleccionado.getSelectedFile().getAbsolutePath());
 							reservada = seleccionado.getSelectedFile().getName();
 							String []palabraid=reservada.split("\\.");
@@ -251,12 +252,11 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 					
 					//Se borra lo que tiene la consola
 					consola.setText("");
-					consola.setText(consola.getText()+"-----------------\n");
+					consolaS.setText("");
+					
 					consola.setText(consola.getText()+"Análisis Léxico\n");
 					consola.setText(consola.getText()+"-----------------\n");
 					
-					consolaS.setText("");
-					consola.setText(consolaS.getText()+"-----------------\n");
 					consola.setText(consolaS.getText()+"Análisis Sintáctico\n");
 					consola.setText(consolaS.getText()+"-----------------\n");
 					
@@ -265,17 +265,17 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 					
 					while (!lexer.isExausthed()) { //Este es equivalente al HASNEXT
 						if (lexer.currentLexema() != null) {
-							
-						
 							tokens.add(lexer.currentToken()+""); // Solo para comprobar
 							if (tokens.get(tokens.size()-1).equalsIgnoreCase("error")) {
 								if (falloL == false) {
 									pos = areaTrabajo.getText().indexOf(lexer.currentLexema().toString(), 0);
 					            	falloL = true;
 								}
-								error += ("Error léxico: "+lexer.currentLexema()+" en linea"+lexer.lene+"\n");
+								if (!error.contains(" en linea"+lexer.lene+"\n")) {
+									error += ("Error léxico: "+lexer.currentLexema()+" en linea "+lexer.lene+"\n");
+								}
 							}else {
-								if (!sintax.AS(lexer.currentToken()+"")) {
+								if (!sintax.AS(lexer.currentToken()+"",lexer.lene)) {
 									consola.setText(consola.getText()+lexer.currentLexema() +"     "+ lexer.currentToken()+"\n"); //Luego se imprime
 						            consolaS.setText(consolaS.getText()+sintax.MensajeDePila);
 						            if (falloS == false) {
@@ -303,7 +303,9 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 						}
 			        	consola.setText(consola.getText()+"-----------------\n");
 			        	consola.setText(consola.getText()+"Análisis Léxico finalizado con errores\n");
-			        	consola.setText(consola.getText()+error); //Imprime los errores
+			        	consola.setText(consola.getText()+"-----------------\n");
+			        	consola.setText(consola.getText()+error+"\n"); //Imprime los errores
+			        	consola.setText(consola.getText()+lexer.mensajeError()+"\n");
 			        	consola.setText(consola.getText()+"-----------------\n");
 			        }
 			        if (sintax.aceptado()) {
@@ -321,6 +323,7 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 						}
 			        	consolaS.setText(consolaS.getText()+"-----------------\n");
 			        	consolaS.setText(consolaS.getText()+"Análisis Sintáctico finalizado con errores\n");
+			        	consolaS.setText(consolaS.getText()+"-----------------\n");
 			        	consolaS.setText(consolaS.getText()+sintax.MensajeDeError+"\n"); //Imprime los errores
 			        	consolaS.setText(consolaS.getText()+"-----------------\n");
 			        }
@@ -461,17 +464,15 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 		
 	}
 	public void keyPressed(KeyEvent e) {
-			lineas.setText("");
-			for (int i = 0; i < areaTrabajo.getLineCount(); i++) {
-				lineas.setText(lineas.getText()+(i+1)+"\n");
-			}
-			
-			/*GAY LEX Method
-			if (e.getKeyChar() == KeyEvent.VK_ENTER) {
-				areaTrabajo.setText(areaTrabajo.getText()+"\t"+"\t"+"\t"+"\t"+"\t"+"\t"+"\t"+"~");
-			}
-			*/
-			sp3.getVerticalScrollBar().setValue(sp.getVerticalScrollBar().getValue());
+		nlineaTextArea();
+	}
+	
+	public void nlineaTextArea() {
+		lineas.setText("");
+		for (int i = 0; i < areaTrabajo.getLineCount(); i++) {
+			lineas.setText(lineas.getText()+(i+1)+"\n");
+		}
+		sp3.getVerticalScrollBar().setValue(sp.getVerticalScrollBar().getValue());
 	}
 	public void keyReleased(KeyEvent e) {
 		
