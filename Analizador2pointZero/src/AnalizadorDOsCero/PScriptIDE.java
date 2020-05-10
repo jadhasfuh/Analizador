@@ -76,7 +76,7 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 	HighlightPainter colorin;
 	ArrayList<String> tokens = new ArrayList<String>();
 	static String salida; 
-	int pos = 0, pos2 = 0;
+	int pos = 0, pos2 = 0, fin = 0, fin2 = 0;
 	private JTextPane consola, consolaS;
 	
 	/*
@@ -234,114 +234,112 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 		run.add(ana);		
 		
 		ana.addActionListener(new ActionListener() {
-			
+
 			public void actionPerformed(ActionEvent e) {
-				if (!(ct.getText().length()<1)) {
-					
+				if (!(ct.getText().length() < 1)) {
+
 					tokens.clear();
-					
 					Lexer lexer = new Lexer();
 					lexer.LexerL(ct.getText(), areaTrabajo);
 					String error = "";
-					
+
 					Sintak sintax = new Sintak();
 					Highlighter lexH = areaTrabajo.getHighlighter();
 					Highlighter sinH = areaTrabajo.getHighlighter();
 					lexH.removeAllHighlights();
 					sinH.removeAllHighlights();
-					
-					//Se borra lo que tiene la consola
+
+					// Se borra lo que tiene la consola
 					consola.setText("");
 					consolaS.setText("");
-					
-					consola.setText(consola.getText()+"Análisis Léxico\n");
-					consola.setText(consola.getText()+"-----------------\n");
-					
-					consola.setText(consolaS.getText()+"Análisis Sintáctico\n");
-					consola.setText(consolaS.getText()+"-----------------\n");
-					
-					boolean falloS = false;
-					boolean falloL = false;
-					
-					while (!lexer.isExausthed()) { //Este es equivalente al HASNEXT
+					consola.setText(consola.getText() + "Análisis Léxico\n");
+					consola.setText(consola.getText() + "-----------------\n");
+					consola.setText(consolaS.getText() + "Análisis Sintáctico\n");
+					consola.setText(consolaS.getText() + "-----------------\n");
+
+					while (!lexer.isExausthed()) { // Este es equivalente al HASNEXT
 						if (lexer.currentLexema() != null) {
-							tokens.add(lexer.currentToken()+""); // Solo para comprobar
-							if (tokens.get(tokens.size()-1).equalsIgnoreCase("error")) {
-								if (falloL == false) {
-									pos = areaTrabajo.getText().indexOf(lexer.currentLexema().toString(), 0);
-					            	falloL = true;
+							tokens.add(lexer.currentToken() + ""); // Solo para comprobar
+							if (tokens.get(tokens.size() - 1).equalsIgnoreCase("error")) {
+								try {
+									pos = areaTrabajo.getLineStartOffset(lexer.lene - 1);
+									fin = areaTrabajo.getLineEndOffset(lexer.lene - 1);
+								} catch (BadLocationException e1) {
+									e1.printStackTrace();
 								}
-								if (!error.contains(" en linea "+lexer.lene+"\n")) {
-									error += ("Error léxico: "+lexer.currentLexema()+" en linea "+lexer.lene+"\n");
+								try {
+									if (pos > 0)
+										lexH.addHighlight(pos, fin, DefaultHighlighter.DefaultPainter);
+								} catch (BadLocationException e1) {
+									e1.printStackTrace();
 								}
-							}else {
-								if (!sintax.AS(lexer.currentToken()+"",lexer.lene)) {
-									consola.setText(consola.getText()+lexer.currentLexema() +"     "+ lexer.currentToken()+"\n"); //Luego se imprime
-						            consolaS.setText(consolaS.getText()+sintax.MensajeDePila);
-						            if (falloS == false) {
-						            	pos2 = areaTrabajo.getText().indexOf(lexer.currentLexema().toString(),0);
-						            	falloS = true;
+								if (!error.contains(" en linea " + lexer.lene + "\n"))
+									error += ("Error léxico: " + lexer.currentLexema() + " en linea " + lexer.lene
+											+ "\n");
+							} else {
+								if (!sintax.AS(lexer.currentToken() + "", lexer.lene)) {
+									consola.setText(consola.getText() + lexer.currentLexema() + "     "
+											+ lexer.currentToken() + "\n"); // Luego se imprime
+									consolaS.setText(consolaS.getText() + sintax.MensajeDePila);
+									try {
+										pos2 = areaTrabajo.getLineStartOffset(lexer.lene - 1);
+										fin2 = areaTrabajo.getLineEndOffset(lexer.lene - 1);
+
+									} catch (BadLocationException e1) {
+										e1.printStackTrace();
 									}
-								}else {
-									consola.setText(consola.getText()+lexer.currentLexema() +"     "+ lexer.currentToken()+"\n"); //Luego se imprime
-						            consolaS.setText(consolaS.getText()+sintax.MensajeDePila);
+									try {
+										if (pos2 > 0)
+											sinH.addHighlight(pos2, fin2,
+													new DefaultHighlighter.DefaultHighlightPainter(
+															new Color(255, 150, 0)));
+									} catch (BadLocationException e1) {
+										e1.printStackTrace();
+									}
+								} else {
+									consola.setText(consola.getText() + lexer.currentLexema() + "     "
+											+ lexer.currentToken() + "\n"); // Luego se imprime
+									consolaS.setText(consolaS.getText() + sintax.MensajeDePila);
 								}
 							}
 						}
-			        	lexer.siguiente();//Avanza
-			        }
-			        if (lexer.isSuccessful() && !tokens.contains("error")) {
-			        	consola.setText(consola.getText()+"-----------------\n");
-			        	consola.setText(consola.getText()+"Análisis Léxico finalizado correctamente\n");
-			        	consola.setText(consola.getText()+"-----------------\n");
-			        } else {
-			        	try {
-			        		if (pos > 0) {
-			        			lexH.addHighlight(pos, pos+ areaTrabajo.getText().length()-pos,
-							               DefaultHighlighter.DefaultPainter);
-							}
-						} catch (BadLocationException e1) {
-							e1.printStackTrace();
-						}
-			        	consola.setText(consola.getText()+"-----------------\n");
-			        	consola.setText(consola.getText()+"Análisis Léxico finalizado con errores\n");
-			        	consola.setText(consola.getText()+"-----------------\n");
-			        	consola.setText(consola.getText()+error+"\n"); //Imprime los errores
-			        	consola.setText(consola.getText()+lexer.mensajeError()+"\n");
-			        	consola.setText(consola.getText()+"-----------------\n");
-			        }
-			        if (sintax.aceptado()) {
-			        	consolaS.setText(consolaS.getText()+"-----------------\n");
-			        	consolaS.setText(consolaS.getText()+"Análisis Sintáctico finalizado correctamente\n");
-			        	consolaS.setText(consolaS.getText()+"-----------------\n");
-					}else {
-						try {
-							if (pos2 > 0) {
-								sinH.addHighlight(pos2 ,
-							               pos2+areaTrabajo.getText().length(),
-							               new DefaultHighlighter.DefaultHighlightPainter(new Color(255,150,0)));
-							}
-						} catch (BadLocationException e1) {
-							e1.printStackTrace();
-						}
-			        	consolaS.setText(consolaS.getText()+"-----------------\n");
-			        	consolaS.setText(consolaS.getText()+"Análisis Sintáctico finalizado con errores\n");
-			        	consolaS.setText(consolaS.getText()+"-----------------\n");
-			        	consolaS.setText(consolaS.getText()+sintax.MensajeDeError+"\n"); //Imprime los errores
-			        	consolaS.setText(consolaS.getText()+"-----------------\n");
-			        }
-				}else {
+						lexer.siguiente();// Avanza
+					}
+					if (lexer.isSuccessful() && !tokens.contains("error")) {
+						consola.setText(consola.getText() + "-----------------\n");
+						consola.setText(consola.getText() + "Análisis Léxico finalizado correctamente\n");
+						consola.setText(consola.getText() + "-----------------\n");
+					} else {
+						consola.setText(consola.getText() + "-----------------\n");
+						consola.setText(consola.getText() + "Análisis Léxico finalizado con errores\n");
+						consola.setText(consola.getText() + "-----------------\n");
+						consola.setText(consola.getText() + error + "\n"); // Imprime los errores
+						consola.setText(consola.getText() + lexer.mensajeError() + "\n");
+						consola.setText(consola.getText() + "-----------------\n");
+					}
+					if (sintax.aceptado()) {
+						consolaS.setText(consolaS.getText() + "-----------------\n");
+						consolaS.setText(consolaS.getText() + "Análisis Sintáctico finalizado correctamente\n");
+						consolaS.setText(consolaS.getText() + "-----------------\n");
+					} else {
+						consolaS.setText(consolaS.getText() + "-----------------\n");
+						consolaS.setText(consolaS.getText() + "Análisis Sintáctico finalizado con errores\n");
+						consolaS.setText(consolaS.getText() + "-----------------\n");
+						consolaS.setText(consolaS.getText() + sintax.MensajeDeError + "\n"); // Imprime los errores
+						consolaS.setText(consolaS.getText() + "-----------------\n");
+					}
+				} else {
 					JOptionPane.showMessageDialog(null, "No hay archivos abiertos");
 				}
-		    }
+			}
 		});
-	
+
 		barraM.add(archivo);
 		barraM.add(opciones);
 		barraM.add(run);
 		frmPstudio.setJMenuBar(barraM);
 		frmPstudio.getContentPane().setLayout(null);
-		
+
 		areaTrabajo = new JTextArea();
 		areaTrabajo.setForeground(Color.DARK_GRAY);
 		areaTrabajo.setFont(new Font("Tahoma", Font.PLAIN, 19));
@@ -356,9 +354,9 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 		sp.getVerticalScrollBar().setBackground(SystemColor.control);
 		sp.setBackground(Color.white);
 		sp.setOpaque(true);
-		
+
 		frmPstudio.getContentPane().add(sp);
-		
+
 		lineas = new JTextPane();
 		lineas.setEditable(false);
 		lineas.setFont(new Font("Tahoma", Font.PLAIN, 19));
@@ -370,37 +368,38 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 		sp3.getVerticalScrollBar().setBackground(SystemColor.control);
 		sp3.setBackground(Color.white);
 		sp3.setOpaque(true);
-		
+
 		frmPstudio.getContentPane().add(sp3);
-		
+
 		JPanel panel = new JPanel();
 		panel.setBackground(SystemColor.control);
 		panel.setBounds(0, 665, 1110, 43);
-		etru=new JLabel("Ruta del archivo");
-		ct=new JTextField(40);
+		etru = new JLabel("Ruta del archivo");
+		ct = new JTextField(40);
 		ct.setEnabled(false);
-		panel.add(etru);panel.add(ct);
+		panel.add(etru);
+		panel.add(ct);
 		frmPstudio.getContentPane().add(panel);
-		
+
 		consola = new JTextPane();
 		consola.setForeground(Color.WHITE);
 		consola.setBackground(Color.DARK_GRAY);
 		consola.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		consola.setBounds(0, 555, 552, 109);
-		
+
 		consolaS = new JTextPane();
 		consolaS.setForeground(Color.WHITE);
 		consolaS.setBackground(Color.GRAY);
 		consolaS.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		consolaS.setBounds(553, 555, 552, 109);
-		
+
 		sp2s = new JScrollPane(consolaS);
 		sp2s.setBounds(553, 555, 552, 109);
 		sp2s.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		sp2s.getVerticalScrollBar().setBackground(SystemColor.control);
 		sp2s.setBackground(Color.white);
 		sp2s.setOpaque(true);
-		
+
 		sp2 = new JScrollPane(consola);
 		sp2.setBounds(0, 555, 552, 109);
 		sp2.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -409,11 +408,11 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 		sp2.setOpaque(true);
 		frmPstudio.getContentPane().add(sp2);
 		frmPstudio.getContentPane().add(sp2s);
-		
+
 		frmPstudio.getContentPane().add(sp2);
-		
+
 		sp.getViewport().addChangeListener(new ChangeListener() {
-			
+
 			public void stateChanged(ChangeEvent e) {
 				sp3.getVerticalScrollBar().setValue(sp.getVerticalScrollBar().getValue());
 			}
