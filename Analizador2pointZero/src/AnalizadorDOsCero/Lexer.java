@@ -54,6 +54,10 @@ public class Lexer {
     		mensajeError += "El archivo está en blanco" + filePath;
     		return;
     	}
+    	while (complete.get(lene-1).equals("V")) {
+			lene++;
+			//esto para si empieza con puros espacios no omi
+		}
         espaciosBlanco.add('\r');
         espaciosBlanco.add('\n');
         espaciosBlanco.add('\t');
@@ -133,4 +137,3 @@ public class Lexer {
         return detener;
     }
 }
-

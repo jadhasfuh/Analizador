@@ -271,7 +271,7 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 									pos = areaTrabajo.getText().indexOf(lexer.currentLexema().toString(), 0);
 					            	falloL = true;
 								}
-								if (!error.contains(" en linea"+lexer.lene+"\n")) {
+								if (!error.contains(" en linea "+lexer.lene+"\n")) {
 									error += ("Error léxico: "+lexer.currentLexema()+" en linea "+lexer.lene+"\n");
 								}
 							}else {
@@ -296,8 +296,10 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 			        	consola.setText(consola.getText()+"-----------------\n");
 			        } else {
 			        	try {
-							lexH.addHighlight(pos, pos+ areaTrabajo.getText().length()-pos,
+			        		if (pos > 0) {
+			        			lexH.addHighlight(pos, pos+ areaTrabajo.getText().length()-pos,
 							               DefaultHighlighter.DefaultPainter);
+							}
 						} catch (BadLocationException e1) {
 							e1.printStackTrace();
 						}
@@ -314,10 +316,11 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 			        	consolaS.setText(consolaS.getText()+"-----------------\n");
 					}else {
 						try {
-							sinH.addHighlight(pos2 ,
+							if (pos2 > 0) {
+								sinH.addHighlight(pos2 ,
 							               pos2+areaTrabajo.getText().length(),
 							               new DefaultHighlighter.DefaultHighlightPainter(new Color(255,150,0)));
-							
+							}
 						} catch (BadLocationException e1) {
 							e1.printStackTrace();
 						}
