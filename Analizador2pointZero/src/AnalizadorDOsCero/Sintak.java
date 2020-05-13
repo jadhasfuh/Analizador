@@ -13,18 +13,9 @@ public class Sintak {
 	Stack<String> pila = new Stack<String>();
 	String MensajeDeError = "";
 	String MensajeDePila = "";
+	String [][] tabla1;
 	int linea = 0 ;
 	boolean errP = false; 
-	
-	String [][] tabla1 = 
-		{
-				{" " ,"identificador","id_ent","abP"  ,"ciP","op_sum"  ,"op_res","op_mult","op_div","id_cad","id_cart","finale"	},
-				{"E" ,"T E’"		 ,"T E’"  ,"T E’" ," "  ," "	   ," "	    ," "	  ," "	   ,"T E’"	,"T E’"	  ," "		},
-				{"E’"," "			 ," "	  ," "	  ,"ç"  ,"op_sum T E’","op_res T E’","ç"	  ,"ç"	   ," "	 	," "	  ,"ç"		},	
-				{"T" ,"F T’"		 ,"F T’"  ,"F T’" ," "  ," "	   ," "	    ," "	  ," "	   ,"F T’"	,"F T’"	  ," "		},
-				{"T’"," "			 ," "	  ," "	  ,"ç"  ,"ç"	   ,"ç"		,"op_mult F T’" ,"op_div F T’"," "	 	," "	  ,"ç"		},
-				{"F" ,"identificador","id_ent","abP E ciP"," "," "     ," "		," "	  ," "	   ,"id_cad","id_cart"," "		}
-		};
 	
 	//Este metodo llena la fila y columna en los arrays creados para ahorrarnos bucles de búsqueda
 	public void llenarFyC() {
@@ -38,6 +29,8 @@ public class Sintak {
 	
 	//Este es el constructor que recibe todo el pedo y inicia lo esensial
 	public Sintak() {
+		tablas t = new tablas();
+		tabla1 = t.laperrona;
 		llenarFyC();
 		pila.push("finale");
 		pila.push("E");
