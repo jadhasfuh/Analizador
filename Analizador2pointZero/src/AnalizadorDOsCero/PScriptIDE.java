@@ -343,13 +343,13 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 		areaTrabajo = new JTextArea();
 		areaTrabajo.setForeground(Color.DARK_GRAY);
 		areaTrabajo.setFont(new Font("Tahoma", Font.PLAIN, 19));
-		areaTrabajo.setBounds(42, 0, 1076, 553);
+		areaTrabajo.setBounds(42, 0, 1076, 353);
 		areaTrabajo.addKeyListener(this);
 		areaTrabajo.addMouseWheelListener(this);
 		areaTrabajo.addMouseListener(this);
 
 		sp = new JScrollPane(areaTrabajo);
-		sp.setBounds(42, 0, 1065, 553);
+		sp.setBounds(42, 0, 1065, 353);
 		sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		sp.getVerticalScrollBar().setBackground(SystemColor.control);
 		sp.setBackground(Color.white);
@@ -361,9 +361,9 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 		lineas.setEditable(false);
 		lineas.setFont(new Font("Tahoma", Font.PLAIN, 19));
 		lineas.setBackground(SystemColor.controlHighlight);
-		lineas.setBounds(0, 0, 40, 553);
+		lineas.setBounds(0, 0, 40, 353);
 		sp3 = new JScrollPane(lineas);
-		sp3.setBounds(0, 0, 40, 553);
+		sp3.setBounds(0, 0, 40, 353);
 		sp3.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 		sp3.getVerticalScrollBar().setBackground(SystemColor.control);
 		sp3.setBackground(Color.white);
@@ -385,23 +385,23 @@ public class PScriptIDE implements KeyListener, MouseWheelListener, MouseListene
 		consola.setForeground(Color.WHITE);
 		consola.setBackground(Color.DARK_GRAY);
 		consola.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		consola.setBounds(0, 555, 552, 109);
+		consola.setBounds(0, 355, 552, 309);
 
 		consolaS = new JTextPane();
 		consolaS.setForeground(Color.WHITE);
 		consolaS.setBackground(Color.GRAY);
 		consolaS.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		consolaS.setBounds(553, 555, 552, 109);
+		consolaS.setBounds(553, 355, 552, 309);
 
 		sp2s = new JScrollPane(consolaS);
-		sp2s.setBounds(553, 555, 552, 109);
+		sp2s.setBounds(553, 355, 552, 309);
 		sp2s.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		sp2s.getVerticalScrollBar().setBackground(SystemColor.control);
 		sp2s.setBackground(Color.white);
 		sp2s.setOpaque(true);
 
 		sp2 = new JScrollPane(consola);
-		sp2.setBounds(0, 555, 552, 109);
+		sp2.setBounds(0, 355, 552, 309);
 		sp2.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		sp2.getVerticalScrollBar().setBackground(SystemColor.control);
 		sp2.setBackground(Color.white);

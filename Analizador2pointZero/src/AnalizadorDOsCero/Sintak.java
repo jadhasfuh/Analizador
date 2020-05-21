@@ -14,8 +14,10 @@ public class Sintak {
 	String MensajeDeError = "";
 	String MensajeDePila = "";
 	String [][] tabla1;
+	int cerra = 0 ;
 	int linea = 0 ;
-	boolean errP = false; 
+	boolean errP = false;
+	boolean vuelta = false;
 	
 	//Este metodo llena la fila y columna en los arrays creados para ahorrarnos bucles de búsqueda
 	public void llenarFyC() {
@@ -29,13 +31,13 @@ public class Sintak {
 	
 	//Este es el constructor que recibe todo el pedo y inicia lo esensial
 	public Sintak() {
+		vuelta = false;
 		tablas t = new tablas();
-		tabla1 = t.laperrona;
+		tabla1 = t.tabla1;
 		llenarFyC();
 		pila.push("finale");
 		pila.push("E");
 	}
-	
 	
 	//Revisa si es aceptado
 	public boolean aceptado() {
@@ -49,9 +51,22 @@ public class Sintak {
 	//Este es el único metodo que se llama
 	public boolean AS(String lexema, int line) {
 		linea = line;
-		MensajeDePila = "";
+		if (vuelta) {
+			MensajeDePila = "";
+		}else {
+			MensajeDePila += pila+"\n";
+			vuelta = true;
+		}
 		lex.add(lexema);
+		if(lexema.equals("abP")) {
+			cerra ++;
+		}
 		procesoApilAndDesapil(lex.size()-1);
+		if(lexema.equals("ciP")) {
+			if (cerra > 0) {
+				cerra --;
+			}
+		}
 		return errP;
 	}
 	
@@ -69,28 +84,36 @@ public class Sintak {
 	//Aqui apila hasta lo indicado en procesoApilAndDesapil()
 	public void apila(int i, int j, int pivote) {
 		String interseccion = tabla1[i][j];
-		if (interseccion == " ") {
+		if (interseccion.equals(" ")) {
 			if (pivote > 0) {
-				MensajeDeError += "Error de Sintaxis: "+lex.get(pivote)+" después de "+ lex.get(pivote-1)+" en la línea "+ linea+"\n" ; errP = false;
+				MensajeDeError += "Error de Sintaxis: "+lex.get(pivote)+" después de "+ lex.get(pivote-1)+" en la línea "+ linea +"\n" ; 	
 			}else {
-				MensajeDeError += "Error de Sintaxis: "+lex.get(pivote)+" al inicio de la línea 1\n" ; errP = false;
+				MensajeDeError += "Error de Sintaxis: "+lex.get(pivote)+" al inicio de la línea 1 \n" ; 
 			}
+			errP = false;
+			MensajeDePila += pila+"\n";
 		}else {
 			String[] interseccionArray = interseccion.split(" ");
-			pila.pop();
-			for (int k = interseccionArray.length; k > 0; k--) {
-				pila.push(interseccionArray[k - 1]);
-			}
-			if (pila.peek().equalsIgnoreCase("ç")) {
+			if (!(lex.get(pivote).equals("ciP") && cerra == 0)) {
 				pila.pop();
-			}
-			if (pila.peek().equalsIgnoreCase(lex.get(pivote))) {
+				for (int k = interseccionArray.length; k > 0; k--) {
+					pila.push(interseccionArray[k - 1]);
+				}
+				if (pila.peek().equalsIgnoreCase("ç")) {
+					pila.pop();
+				}
+				if (pila.peek().equalsIgnoreCase(lex.get(pivote))) {
+					MensajeDePila += pila+"\n";
+					pila.pop();
+					MensajeDePila += pila+"\n";
+					errP = true;
+				} else {
+					MensajeDePila += pila+"\n";
+					procesoApilAndDesapil(pivote);
+				}
+			}else {
 				MensajeDePila += pila+"\n";
-				pila.pop();
-				MensajeDePila += pila+"\n";errP = true;
-			} else {
-				MensajeDePila += pila+"\n";
-				procesoApilAndDesapil(pivote);
+				System.out.println("s");
 			}
 		}
 	}

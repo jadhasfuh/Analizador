@@ -3,12 +3,12 @@ package AnalizadorDOsCero;
 public class tablas {
 	String [][] tabla1 = 
 		{
-				{" " ,"identificador","id_ent","abP"  ,"ciP","op_sum"  ,"op_res","op_mult","op_div","id_cad","id_cart","finale"	},
-				{"E" ,"T E’"		 ,"T E’"  ,"T E’" ," "  ," "	   ," "	    ," "	  ," "	   ,"T E’"	,"T E’"	  ," "		},
-				{"E’"," "			 ," "	  ," "	  ,"ç"  ,"op_sum T E’","op_res T E’","ç"	  ,"ç"	   ," "	 	," "	  ,"ç"		},	
-				{"T" ,"F T’"		 ,"F T’"  ,"F T’" ," "  ," "	   ," "	    ," "	  ," "	   ,"F T’"	,"F T’"	  ," "		},
-				{"T’"," "			 ," "	  ," "	  ,"ç"  ,"ç"	   ,"ç"		,"op_mult F T’" ,"op_div F T’"," "	 	," "	  ,"ç"		},
-				{"F" ,"identificador","id_ent","abP E ciP"," "," "     ," "		," "	  ," "	   ,"id_cad","id_cart"," "		}
+				{" " ,"identificador","id_ent","abP"  		,"ciP"	,"op_sum"  		,"op_res"		,"op_mult"		,"op_div"		,"id_cad"	,"id_cart","finale"	},
+				{"E" ,"T E’"		 ,"T E’"  ,"T E’" 		," "  	," "	   		," "	    	," "	  		," "	  		,"T E’"		,"T E’"	  ,"ç"		},
+				{"E’"," "			 ," "	  ," "	  		,"ç"  	,"op_sum T E’"	,"op_res T E’"	,"ç"	  		,"ç"	   		," "	 	," "	  ,"ç"		},	
+				{"T" ,"F T’"		 ,"F T’"  ,"F T’" 		," "  	," "	   		," "	    	," "	  		," "	   		,"F T’"		,"F T’"	  ,"ç"		},
+				{"T’"," "			 ," "	  ," "	  		,"ç"  	,"ç"	   		,"ç"			,"op_mult F T’" ,"op_div F T’"	," "	 	," "	  ,"ç"		},
+				{"F" ,"identificador","id_ent","abP E ciP"	," "	," "       		," "			," "	  		," "	   		,"id_cad"	,"id_cart","ç"		}
 		};
 	
 	String [][] laperrona = 
